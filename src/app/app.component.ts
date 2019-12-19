@@ -12,6 +12,8 @@ export class AppComponent implements OnInit {
   answers: any = []
   finalScore:number;
   submitted:boolean = false;
+  timer:number
+  timerunning:any
   constructor(private service: ApiService) {
 
   }
@@ -19,6 +21,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     // this.quizdata = this.service.getQuizData()
     this.index =0
+    this.timer =30;
     this.service.getQuizData().subscribe((res: any) => {
       res;
       this.quizdata = res;
@@ -39,6 +42,7 @@ export class AppComponent implements OnInit {
     })
   }
   startInterval() {
+    this.startTimer();
     this.interval = setInterval(() => {
       this.changeData();
     }, 30000)
@@ -47,12 +51,15 @@ export class AppComponent implements OnInit {
   changeData() {
     console.log(this.index)
     if (this.index == this.quizdata.results.length - 1) {
-      clearInterval(this.interval);
+      this.clearTimer();
+      this.submit();
     } else {
-      this.index += 1
-      if(this.quizdata.results[this.index].answered){
-
-      }
+      this.next();
+      // if(this.quizdata.results[this.index].answered){
+      //   this.next()
+      // }else{
+      //   this.index += 1
+      // }
     }
 
 
@@ -68,17 +75,39 @@ export class AppComponent implements OnInit {
   }
 
   next() {
+    this.clearTimer();
     console.log(this.quizdata.results[this.index].answered)
+   if(this.quizdata.results[this.index].answered){
     this.answers.push({ id: this.quizdata.results[this.index].id, answer: this.quizdata.results[this.index].answered });
+   }
     this.index+= 1;
     console.log('answers',this.answers)
-    clearInterval(this.interval);
+    // clearInterval(this.interval);
     this.startInterval();
   }
 
+  startTimer(){
+    this.timer =30
+    this.timerunning = setInterval(()=>{
+      if(this.timer >0){
+        this.timer--
+      }else{
+        clearInterval(this.timerunning)
+      }
+    },1000)
+  }
+  clearTimer(){
+    clearInterval(this.timerunning);
+    clearInterval(this.interval);
+  }
+
   submit(){
+    this.clearTimer();
     this.submitted = true;
     let score = 0;
+    if(this.quizdata.results[this.index].answered){
+      this.answers.push({ id: this.quizdata.results[this.index].id, answer: this.quizdata.results[this.index].answered });
+     }
     for(let i = 0;i<this.answers.length;i++){
       for(let j = 0;j< this.quizdata.results.length;j++){
         if(this.quizdata.results[j].id == this.answers[i].id){
@@ -96,6 +125,8 @@ export class AppComponent implements OnInit {
   restartQuiz(){
     this.submitted = false;
     clearInterval(this.interval);
+    this.interval = undefined;
+    this.clearTimer();
     this.finalScore = undefined
     this.answers =[];
     this.ngOnInit();

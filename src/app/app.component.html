@@ -1,38 +1,59 @@
-<div class="container">
+<div class="container" style="margin-top: 15%">
+  <div class="panel panel-success">
+      <div class="panel-heading">TRIVIA GAME</div>
+    <div class="panel-body">
+      <div *ngIf="!finalScore && !submitted && !interval">
+        <h2 class="text-center">Press Start Button to Answer the Quiz</h2>
+        <button type="button" class="btn btn-success btn-large center-block" (click)="startInterval()">Start Quiz</button>
+      </div>
 
-  <div *ngIf="!finalScore && !submitted && !interval">
-    <h2>Press Start Button to Answer the Quiz</h2>
-    <button type="button" class="btn btn-success" (click)="startInterval()">Start Quiz</button>
-  </div>
-
-  <div *ngIf="!finalScore && !submitted && interval">
-    <h1 class="text-center">TRIVIA GAME</h1>
-    <div class="col-md-12">
-      <div class="col-md-12">
-        <div class="col-md-12" *ngIf="quizdata">
+      <div *ngIf="!finalScore && !submitted && interval">
           <div class="col-md-12">
-            <h3 style="text-align: center;">{{quizdata.results[index].question}}</h3>
-            <div class="col-md-offset-0 col-md-6" *ngFor="let ans of quizdata.results[index].answers">
-              <label><input style="display: inline;" type="checkbox" class="checkbox" value="{{ans}}"
-                  (change)="checkbox($event)">{{ans}}</label>
+            <div class="col-md-12">
+              <div class="col-md-12">
+                <h3 class="pull-right">Time left: 0:{{timer}}</h3>
+              </div>
+              <div class="col-md-12" *ngIf="quizdata">
+                <div class="col-md-12">
+                  <h3 style="text-align: center;">{{quizdata.results[index].question}}</h3>
+
+            
+                  <div class="col-md-offset-0 col-md-6" *ngFor="let ans of quizdata.results[index].answers">
+                      <div class="checkbox">
+                          <label style="font-size: 1.5em">
+                              <input type="checkbox" value="{{ans}}"  (change)="checkbox($event)">
+                              <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                              {{ans}}
+                          </label>
+                      </div>
+                   <!--<label><input style="display: inline;" type="checkbox" class="checkbox" value="{{ans}}"
+                        (change)="checkbox($event)">{{ans}}</label>--> 
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+          <div class="pull-right">
+              <button type="button" class="btn btn-primary btn-medium" (click)="next()"
+              *ngIf="index < quizdata?.results.length-1">Next</button>
+            <button type="submit" class="btn btn-primary btn-medium" (click)="submit()"
+              *ngIf="index == quizdata?.results.length -1">Submit</button>
+          </div>
+          
         </div>
-      </div>
-    </div>
-    <button type="button" class="btn btn-primary" (click)="next()"
-      *ngIf="index < quizdata?.results.length-1">Next</button>
-    <button type="submit" class="btn btn-primary" (click)="submit()"
-      *ngIf="index == quizdata?.results.length -1">Submit</button>
-  </div>
-
-  <div *ngIf="finalScore">
-    <h2>Your Score</h2>
-    <label>{{finalScore}}</label>
-
-    <div>
-      <button type="button" class="btn btn-primary" (click)="restartQuiz()">Restart Quiz</button>
+      
+        <div *ngIf="finalScore >=0">
+          <h2>Your Score</h2>
+          <h3>{{finalScore}}</h3>
+      
+          <div class="pull-right">
+            <button type="button" class="btn btn-primary btn-medium" (click)="restartQuiz()">Restart Quiz</button>
+          </div>
+        </div>
     </div>
   </div>
+
+
+  
 
 </div>
